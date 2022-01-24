@@ -1,20 +1,47 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <form [formGroup]="subredditForm">
+      <ion-searchbar
+        animated
+        placeholder="subreddit..."
+        formControlName="subredditControl"
+        value=""
+      ></ion-searchbar>
+    </form>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="openSettings()">
+        <ion-icon slot="icon-only" name="settings"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ion-list lines="none">
+    <div class="gif">
+      <ion-item button detail="false">GIF GOES HERE </ion-item>
+      <ion-list-header style="text-align: left">
+        <ion-label>TITLE GOES HERE</ion-label>
+      </ion-list-header>
+    </div>
+  </ion-list>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-infinite-scroll
+    *ngIf="gifs.length"
+    threshold="100px"
+    (ionInfinite)="loadMore($event)"
+  >
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Fetching gifs..."
+    >
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <ion-item lines="none" *ngIf="redditService.noPostsRemaining">
+    <ion-label style="text-align: center; font-weight: bold"
+      >Cannot find any more gifs!</ion-label
+    >
+  </ion-item>
 </ion-content>
