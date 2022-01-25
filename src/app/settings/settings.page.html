@@ -1,9 +1,61 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Settings</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-content>
+      <p>
+        <strong>Giflist</strong> is a client for <strong>reddit</strong> that
+        will <strong>stream GIFs</strong> from
+        <strong>any subreddit that contains gifs</strong>. By default it used
+        the popular <strong>gifs</strong> subreddit, but you can change this to
+        whatever you like, e.g: <em>perfectloops</em>,
+        <em>chemicalreactiongifs</em>, <em>animalsbeingderps</em>.
+      </p>
+      <br />
+      <p>
+        To play a GIF, just tap it. To view the original submission for any GIF,
+        tap the title section and it will open in reddit. You can configure some
+        settings for the application below. Enjoy!
+      </p>
+    </ion-card-content>
+  </ion-card>
 
+  <h3>Default Subreddit</h3>
+
+  <ion-input
+    type="text"
+    placeholder="subreddit ..."
+    clearInput
+    [(ngModel)]="settings.subreddit"
+  ></ion-input>
+
+  <h3>Sort</h3>
+
+  <ion-segment color="primary" [(ngModel)]="settings.sort">
+    <ion-segment-button value="hot"> Hot </ion-segment-button>
+    <ion-segment-button value="new"> New </ion-segment-button>
+  </ion-segment>
+
+  <h3>Page Size</h3>
+
+  <ion-segment color="primary" [(ngModel)]="settings.perPage">
+    <ion-segment-button value="10"> 10 </ion-segment-button>
+    <ion-segment-button value="20"> 20 </ion-segment-button>
+    <ion-segment-button value="30"> 30 </ion-segment-button>
+  </ion-segment>
 </ion-content>
+
+<ion-footer>
+  <ion-button (click)="save()" expand="full" color="primary">
+    Apply Settings
+  </ion-button>
+</ion-footer>

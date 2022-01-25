@@ -15,14 +15,40 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+  <ion-progress-bar
+    color="dark"
+    *ngIf="redditService.loading"
+    type="indeterminate"
+    reverse="true"
+  ></ion-progress-bar>
 </ion-header>
 
 <ion-content>
   <ion-list lines="none">
-    <div class="gif">
-      <ion-item button detail="false">GIF GOES HERE </ion-item>
+    <div class="gif" *ngFor="let gif of gifs">
+      <ion-item button detail="false" (click)="playVideo($event,gif)">
+        <ion-spinner color="light" *ngIf="gif.loading"></ion-spinner>
+        <div
+          style="background: url({{gif.thumbnail}}) 50% 50% / cover no-repeat"
+          [ngStyle]="gif.dataLoaded !== true ? { filter: 'blur(3px) brightness(0.6)', transform: 'scale(1.1)'} : {}"
+          class="preload-background"
+        >
+          <video
+            playsinline
+            poster="none"
+            preload="none"
+            [loop]="true"
+            [muted]="true"
+            [src]="gif.src"
+          ></video>
+        </div>
+      </ion-item>
+
       <ion-list-header style="text-align: left">
-        <ion-label>TITLE GOES HERE</ion-label>
+        <ion-label>{{ gif.title }}</ion-label>
+        <ion-button (click)="showComments(gif)">
+          <ion-icon name="chatbubbles"></ion-icon>{{ gif.comments }}
+        </ion-button>
       </ion-list-header>
     </div>
   </ion-list>

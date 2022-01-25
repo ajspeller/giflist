@@ -1,5 +1,3 @@
-import { StringifyOptions } from 'querystring';
-
 export interface Gif {
   src: string | boolean;
   author: string;

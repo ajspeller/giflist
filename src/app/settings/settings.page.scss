@@ -1,0 +1,14 @@
+ion-card,
+ion-segment {
+  --ion-background-color: #fff;
+}
+
+ion-input {
+  background-color: #ddd;
+  font-size: 1.2em;
+  --padding-start: 15px;
+  --padding-end: 15px;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+  border-radius: 5px;
+}

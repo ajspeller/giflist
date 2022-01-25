@@ -1,14 +1,21 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { IonContent, ModalController } from '@ionic/angular';
-import { Gif } from '../interfaces/gif';
-import { RedditService } from '../services/reddit.service';
+
 import {
   debounceTime,
   distinctUntilChanged,
   takeWhile,
   skip,
 } from 'rxjs/operators';
+
+import { IonContent, ModalController } from '@ionic/angular';
+
+import { Browser } from '@capacitor/browser';
+
+import { Gif } from '../interfaces/gif';
+
+import { RedditService } from '../services/reddit.service';
+import { SettingsPage } from '../settings/settings.page';
 
 @Component({
   selector: 'app-home',
@@ -46,11 +53,66 @@ export class HomePage implements OnInit {
       });
   }
 
-  showComments(gif: Gif): void {}
+  showComments(gif: Gif): void {
+    Browser.open({
+      toolbarColor: '#fff',
+      url: `https://reddit.com${gif.permalink}`,
+      windowName: '_system',
+    });
+  }
 
-  async openSettings() {}
+  async openSettings(): Promise<void> {
+    const modal = await this.modalController.create({
+      component: SettingsPage,
+    });
 
-  playVideo(evt: Event, gif: Gif): void {}
+    modal.present();
 
-  loadMore(evt: Event): void {}
+    await modal.onDidDismiss();
+    this.redditService.reset();
+  }
+
+  playVideo(evt: Event, gif: Gif): void {
+    const video = evt.target as HTMLVideoElement;
+    if (video.readyState === 4) {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    } else {
+      if (video.getAttribute('data-event-loadeddata') !== 'true') {
+        gif.loading = true;
+        video.load();
+        const handleVideoLoaded = async () => {
+          await video.play();
+          gif.dataLoaded = true;
+          gif.loading = false;
+          video.removeEventListener('loadeddata', handleVideoLoaded);
+        };
+        video.addEventListener('loadeddata', handleVideoLoaded);
+        video.setAttribute('data-event-loadeddata', 'true');
+      }
+    }
+  }
+
+  loadMore(evt: Event): void {
+    const infiniteElement = evt.target as HTMLIonInfiniteScrollElement;
+    if (!this.redditService.loading) {
+      this.redditService
+        .getLoadingState()
+        .pipe(
+          skip(1),
+          takeWhile((loadingState) => loadingState === true, true)
+        )
+        .subscribe((loadingState) => {
+          if (loadingState === false) {
+            infiniteElement.complete();
+          }
+        });
+      this.redditService.nextPage();
+    } else {
+      infiniteElement.complete();
+    }
+  }
 }
